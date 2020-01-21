@@ -11,11 +11,22 @@ import ShoppingCart from './components/ShoppingCart';
 
 function App() {
 	const [products] = useState(data);
-	const [cart, setCart] = useState([]);
+	const [cart, setCart] = useState(localStorage.getItem("CART") ? JSON.parse(localStorage.getItem("CART")) : []);
 
 	const addItem = item => {
-		setCart([...cart, item]);
+		const updatedCart = [...cart, item];
+
+		localStorage.setItem("CART", JSON.stringify(updatedCart));
+		setCart(updatedCart);
+
 	};
+
+	const removeItem = item => {
+		const updatedCart = [...cart.filter(i => i.id !== item.id)];
+
+		localStorage.setItem("CART", JSON.stringify(updatedCart));
+		setCart(updatedCart);
+	}
 
 	return (
 		<div className="App">
@@ -27,7 +38,7 @@ function App() {
 					<Products	/>
 				</Route>
 			</ProductContext.Provider>
-			<CartContext.Provider value={{ cart }}>
+			<CartContext.Provider value={{ cart, removeItem }}>
 				<Route path="/cart">
 					<ShoppingCart />
 				</Route>
